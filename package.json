@@ -1,11 +1,13 @@
 {
   "name": "customer-inviter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lists the customers who can be invited",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint .",
+    "test": "mocha src/**/*.test.js",
+    "test:watch": "npm t -- --watch"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,10 @@
     "url": "https://github.com/subramaniashiva/customer-inviter/issues"
   },
   "homepage": "https://github.com/subramaniashiva/customer-inviter#readme",
-  "devDependencies": {}
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "eslint": "^7.27.0",
+    "eslint-config-google": "^0.14.0",
+    "mocha": "^8.4.0"
+  }
 }
