@@ -5,7 +5,8 @@
     "src/**/*.test.js",
     "test/**/*.js",
     "index.js",
-    "src/container.js"
+    "src/container.js",
+    "src/constants.js"
   ],
   "branches": 100,
   "lines": 100,

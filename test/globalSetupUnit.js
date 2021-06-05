@@ -7,7 +7,5 @@ chai.use(sinonChai);
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-before(() => {
-  global.expect = expect;
-  global.sinon = sinon;
-});
+global.expect = expect;
+global.sinon = sinon;
