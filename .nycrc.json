@@ -4,7 +4,8 @@
   "exclude": [
     "src/**/*.test.js",
     "test/**/*.js",
-    "index.js"
+    "index.js",
+    "src/container.js"
   ],
   "branches": 100,
   "lines": 100,
