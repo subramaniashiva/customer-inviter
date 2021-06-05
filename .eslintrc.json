@@ -1,17 +1,27 @@
 {
   "extends": [
     "eslint:recommended",
-    "google"
+    "google",
+    "prettier"
   ],
   "env": {
     "node": true,
     "es6": true,
     "mocha": true
   },
-  "globals": {
-    "expect": true
+  "parserOptions": {
+    "ecmaVersion": 2017
   },
   "rules": {
     "object-curly-spacing": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": "*.test.js",
+      "globals": {
+        "expect": true,
+        "sinon": true
+      }
+    }
+  ]
 }
