@@ -1,12 +1,15 @@
 const readRemoteFileFactory = require('./readRemoteFile');
 
 describe('readRemoteFile', () => {
-  const setup = ({ axios, isValidUrl } = {}) => {
+  const setup = ({ axios, isValidUrl, logger } = {}) => {
     const dependencies = {
       axios: axios || {
         get: sinon.stub().resolves({ data: 'file content' }),
       },
       isValidUrl: isValidUrl || sinon.stub().returns(true),
+      logger: logger || {
+        info: sinon.stub(),
+      },
     };
     const readRemoteFile = readRemoteFileFactory(dependencies);
 

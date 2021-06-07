@@ -3,14 +3,16 @@ const serverFactory = require('./server');
 describe('server', () => {
   const { stub, reset: resetSandbox, restore } = sinon.createSandbox();
 
-  const setup = ({ getCustomerData, constants, logger } = {}) => {
+  const setup = ({ getInvitableCustomers, constants, logger } = {}) => {
     const dependencies = {
-      getCustomerData: getCustomerData || stub().resolves('some-data'),
+      getInvitableCustomers: getInvitableCustomers || stub().resolves('some-data'),
       constants: constants || {
         CUSTOMER_DATA_URL: 'http://some-url',
+        MAX_CUSTOMER_DISTANCE_KMS: 100,
       },
       logger: logger || {
         error: stub(),
+        info: stub(),
       }
     }
 
@@ -27,22 +29,26 @@ describe('server', () => {
   });
 
   describe('start', () => {
-    it('gets customer data', async () => {
+    it('gets invitable customers', async () => {
       const { server, dependencies } = setup();
 
       await server.start();
 
-      return expect(dependencies.getCustomerData).to.have.been.calledOnceWithExactly({ customerDataUrl: dependencies.constants.CUSTOMER_DATA_URL });
+      return expect(dependencies.getInvitableCustomers).
+        to.have.been.calledOnceWithExactly({
+          customerDataUrl: dependencies.constants.CUSTOMER_DATA_URL,
+          maxDistanceInKms: dependencies.constants.MAX_CUSTOMER_DISTANCE_KMS
+        });
     });
 
-    describe('when there is an error in getting customer data', () => {
+    describe('when there is an error in getting invitable data', () => {
       before(() => stub(process, 'exit'));
 
       after(restore);
 
       it('exits the process', async () => {
-        const getCustomerData = stub().rejects(new Error('some error'));
-        const { server } = setup({ getCustomerData });
+        const getInvitableCustomers = stub().rejects(new Error('some error'));
+        const { server } = setup({ getInvitableCustomers });
 
         await server.start();
 

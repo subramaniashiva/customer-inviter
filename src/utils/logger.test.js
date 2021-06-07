@@ -1,11 +1,13 @@
 const loggerFactory = require('./logger');
-const { expect } = require('chai');
 
 describe('logger', () => {
   const setup = ({ bunyan, package } = {}) => {
     const dependencies = {
       bunyan: bunyan || {
         createLogger: sinon.stub(),
+        stdSerializers: {
+          err: sinon.stub(),
+        }
       },
       package: {
         name: 'package-name',
@@ -23,7 +25,10 @@ describe('logger', () => {
     const { dependencies } = setup();
 
     return expect(dependencies.bunyan.createLogger).to.have.been.calledOnceWithExactly({
-      name: dependencies.package.name
+      name: dependencies.package.name,
+      serializers: {
+        err: dependencies.bunyan.stdSerializers.err
+      },
     });
   });
 
@@ -33,7 +38,10 @@ describe('logger', () => {
       error: sinon.stub(),
     };
     const bunyan = {
-      createLogger: sinon.stub().returns(expectedLoggerInstance)
+      createLogger: sinon.stub().returns(expectedLoggerInstance),
+      stdSerializers: {
+        err: sinon.stub(),
+      },
     }
     const { logger } = setup({ bunyan });
 
