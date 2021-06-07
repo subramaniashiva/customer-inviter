@@ -8,7 +8,6 @@ module.exports = ({ constants, getInvitableCustomers, logger }) => {
         });
         logger.info({ selectedCustomers });
       } catch (err) {
-        console.log('erro is ', err);
         logger.error({ err }, 'Error while getting invitable customers list');
         process.exit(1);
       }
