@@ -4,12 +4,22 @@ const { expect } = require('chai');
 describe('customerModel', () => {
   const InvalidCustomerError = class extends Error { };
 
-  const setup = ({ isValidCustomerId,
+  const setup = ({
+    constants,
+    isValidCustomerId,
     isValidCustomerName,
     isValidLatitude,
     isValidLongitude } = {}) => {
     const dependencies = {
       InvalidCustomerError,
+      constants: constants || {
+        CUSTOMER_DATA_KEYS: {
+          USER_ID: 'user_id',
+          NAME: 'name',
+          LATITUDE: 'latitude',
+          LONGITUDE: 'longitude',
+        },
+      },
       isValidCustomerId: isValidCustomerId || sinon.stub().returns(true),
       isValidLatitude: isValidLatitude || sinon.stub().returns(true),
       isValidLongitude: isValidLongitude || sinon.stub().returns(true),

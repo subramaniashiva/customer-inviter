@@ -1,4 +1,5 @@
 module.exports = ({
+  constants,
   InvalidCustomerError,
   isValidCustomerId,
   isValidCustomerName,
@@ -7,22 +8,23 @@ module.exports = ({
     if (!customerObject || typeof customerObject !== 'object') {
       throw new TypeError('customerObject must be a valid object');
     }
+    const { USER_ID, NAME, LATITUDE, LONGITUDE } = constants.CUSTOMER_DATA_KEYS;
 
     const validCustomerRules = [{
       validator: isValidCustomerId,
-      customerObjectKey: 'user_id',
+      customerObjectKey: USER_ID,
       validatorParamName: 'customerId'
     }, {
       validator: isValidCustomerName,
-      customerObjectKey: 'name',
+      customerObjectKey: NAME,
       validatorParamName: 'name'
     }, {
       validator: isValidLatitude,
-      customerObjectKey: 'latitude',
+      customerObjectKey: LATITUDE,
       validatorParamName: 'latitude'
     }, {
       validator: isValidLongitude,
-      customerObjectKey: 'longitude',
+      customerObjectKey: LONGITUDE,
       validatorParamName: 'longitude'
     }];
 
@@ -37,9 +39,9 @@ module.exports = ({
     }
 
     return {
-      user_id: customerObject.user_id,
-      name: customerObject.name,
-      latitude: customerObject.latitude,
-      longitude: customerObject.longitude,
+      [USER_ID]: customerObject[USER_ID],
+      [NAME]: customerObject[NAME],
+      [LATITUDE]: customerObject[LATITUDE],
+      [LONGITUDE]: customerObject[LONGITUDE],
     }
   };

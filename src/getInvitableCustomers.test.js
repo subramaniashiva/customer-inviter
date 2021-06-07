@@ -6,7 +6,8 @@ describe('getInvitableCustomers', () => {
     getCustomerData,
     constants,
     getGreatCircleDistance,
-    logger } = {}) => {
+    logger
+  } = {}) => {
     const dependencies = {
       getCustomerData: getCustomerData || sinon.stub().resolves([]),
       constants: constants || {
@@ -17,6 +18,14 @@ describe('getInvitableCustomers', () => {
           }
         },
         MAX_CUSTOMER_DISTANCE_KMS: 100,
+        CUSTOMER_DATA_KEYS: {
+          USER_ID: 'user_id',
+          NAME: 'name',
+        },
+        SORT_ORDER: {
+          ASCENDING: 'ascending',
+          DESCENDING: 'descending',
+        },
       },
       logger: logger || {
         error: sinon.stub(),
@@ -137,9 +146,11 @@ describe('getInvitableCustomers', () => {
       describe('when distance filter is given', () => {
         it('returns the customers who are within distance given', async () => {
           const customerData = [{
+            user_id: 1,
             latitude: '1',
             longitude: '1',
           }, {
+            user_id: 2,
             latitude: '2',
             longitude: '2',
           }];
@@ -152,6 +163,140 @@ describe('getInvitableCustomers', () => {
           const selectedCustomers = await getInvitableCustomers({ customerDataUrl: 'some-url', maxDistanceInKms: 200 });
 
           return expect(selectedCustomers).to.eql(customerData);
+        });
+      });
+
+      describe('sorting the result', () => {
+        describe('when sort options are not given', () => {
+          it('sorts by user id in ascending order', async () => {
+            const customerData = [{
+              user_id: 1000,
+              latitude: '1',
+              longitude: '1',
+            }, {
+              user_id: 200,
+              latitude: '2',
+              longitude: '2',
+            }];
+            const getCustomerData = sinon.stub().resolves(customerData);
+            const getGreatCircleDistance = sinon.stub()
+            getGreatCircleDistance.onCall(0).returns(100)
+            getGreatCircleDistance.onCall(1).returns(50);
+            const { getInvitableCustomers } = setup({ getCustomerData, getGreatCircleDistance });
+
+            const selectedCustomers = await getInvitableCustomers({ customerDataUrl: 'some-url' });
+
+            expect(selectedCustomers[0]).to.eql(customerData[1]);
+            return expect(selectedCustomers[1]).to.eql(customerData[0]);
+          });
+        });
+
+        describe('when sort options are given', () => {
+          describe('when the sort key is not present in customer data', () => {
+            it('logs an error and returns unsorted list', async () => {
+              const customerData = [{
+                user_id: 1000,
+                latitude: '1',
+                longitude: '1',
+              }, {
+                user_id: 200,
+                latitude: '2',
+                longitude: '2',
+              }];
+              const getCustomerData = sinon.stub().resolves(customerData);
+              const getGreatCircleDistance = sinon.stub()
+              getGreatCircleDistance.onCall(0).returns(100)
+              getGreatCircleDistance.onCall(1).returns(50);
+              const { getInvitableCustomers, dependencies } = setup({ getCustomerData, getGreatCircleDistance });
+
+              const sort = {
+                key: 'invalid',
+                sortOrder: dependencies.constants.SORT_ORDER.ASCENDING,
+              };
+              const selectedCustomers = await getInvitableCustomers({
+                customerDataUrl: 'some-url',
+                sort,
+              });
+
+              expect(dependencies.logger.error).to.have.been.calledOnceWithExactly(
+                'Invalid sort object provided. Returning unsorted customers', { sort });
+              expect(selectedCustomers[0]).to.eql(customerData[0]);
+              return expect(selectedCustomers[1]).to.eql(customerData[1]);
+            });
+          });
+
+          describe('when the sort order is invalid', () => {
+            it('logs an error and returns unsorted list', async () => {
+              const customerData = [{
+                user_id: 1000,
+                latitude: '1',
+                longitude: '1',
+              }, {
+                user_id: 200,
+                latitude: '2',
+                longitude: '2',
+              }];
+              const getCustomerData = sinon.stub().resolves(customerData);
+              const getGreatCircleDistance = sinon.stub()
+              getGreatCircleDistance.onCall(0).returns(100)
+              getGreatCircleDistance.onCall(1).returns(50);
+              const { getInvitableCustomers, dependencies } = setup({ getCustomerData, getGreatCircleDistance });
+
+              const sort = {
+                key: dependencies.constants.CUSTOMER_DATA_KEYS.USER_ID,
+                sortOrder: 'invlid',
+              };
+              const selectedCustomers = await getInvitableCustomers({
+                customerDataUrl: 'some-url',
+                sort,
+              });
+
+              expect(dependencies.logger.error).to.have.been.calledOnceWithExactly(
+                'Invalid sort object provided. Returning unsorted customers', { sort });
+              expect(selectedCustomers[0]).to.eql(customerData[0]);
+              return expect(selectedCustomers[1]).to.eql(customerData[1]);
+            });
+          });
+
+          describe('when valid sort options are given', () => {
+            it('sorts by the key and order given', async () => {
+              const customerData = [{
+                user_id: 1000,
+                latitude: '1',
+                longitude: '1',
+                name: 'Alpha',
+              }, {
+                user_id: 250,
+                latitude: '2',
+                longitude: '2',
+                name: 'Gamma',
+              }, {
+                user_id: 200,
+                latitude: '3',
+                longitude: '3',
+                name: 'Beta',
+              }];
+              const getCustomerData = sinon.stub().resolves(customerData);
+              const getGreatCircleDistance = sinon.stub()
+              getGreatCircleDistance.onCall(0).returns(100)
+              getGreatCircleDistance.onCall(1).returns(50);
+              getGreatCircleDistance.onCall(2).returns(75);
+              const { getInvitableCustomers, dependencies } = setup({ getCustomerData, getGreatCircleDistance });
+
+              const sort = {
+                key: dependencies.constants.CUSTOMER_DATA_KEYS.NAME,
+                sortOrder: dependencies.constants.SORT_ORDER.DESCENDING,
+              }
+              const selectedCustomers = await getInvitableCustomers({
+                customerDataUrl: 'some-url',
+                sort,
+              });
+
+              expect(selectedCustomers[0]).to.eql(customerData[1]);
+              expect(selectedCustomers[1]).to.eql(customerData[2]);
+              return expect(selectedCustomers[2]).to.eql(customerData[0]);
+            });
+          });
         });
       });
     });
