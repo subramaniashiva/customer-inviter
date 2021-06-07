@@ -1,10 +1,15 @@
-module.exports = ({ getCustomerData, constants, logger }) => {
+module.exports = ({ constants, getInvitableCustomers, logger }) => {
   return {
     start: async function () {
       try {
-        await getCustomerData({ customerDataUrl: constants.CUSTOMER_DATA_URL });
+        const selectedCustomers = await getInvitableCustomers({
+          customerDataUrl: constants.CUSTOMER_DATA_URL,
+          maxDistanceInKms: constants.MAX_CUSTOMER_DISTANCE_KMS
+        });
+        logger.info({ selectedCustomers });
       } catch (err) {
-        logger.error({ err }, 'Error while getting customer data');
+        console.log('erro is ', err);
+        logger.error({ err }, 'Error while getting invitable customers list');
         process.exit(1);
       }
     }
