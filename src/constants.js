@@ -8,4 +8,14 @@ module.exports = () => ({
   },
   EARTH_RADIUS_KMS: 6371,
   MAX_CUSTOMER_DISTANCE_KMS: 100,
+  CUSTOMER_DATA_KEYS: {
+    USER_ID: 'user_id',
+    NAME: 'name',
+    LATITUDE: 'latitude',
+    LONGITUDE: 'longitude',
+  },
+  SORT_ORDER: {
+    ASCENDING: 'ascending',
+    DESCENDING: 'descending',
+  },
 });
