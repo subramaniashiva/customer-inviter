@@ -1,6 +1,6 @@
 {
   "name": "customer-inviter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Lists the customers who can be invited",
   "main": "index.js",
   "scripts": {
