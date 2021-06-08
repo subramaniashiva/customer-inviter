@@ -80,4 +80,18 @@ describe('server', () => {
       });
     });
   });
+
+  describe('stop', () => {
+    before(() => stub(process, 'exit'));
+
+    after(restore);
+
+    it('exits gracefully', async () => {
+      const { server } = setup();
+
+      await server.stop();
+
+      return expect(process.exit).to.have.been.calledOnceWith(0);
+    });
+  });
 });
