@@ -47,6 +47,8 @@ Since this app is expected to be in a quality as if it is intended to ship in pr
 ### Commit guidelines
 This repo follows **conventional commits** for all it's commits. It is a lightweight convention on top of commit messages. More details about this convention can be found [here](https://www.conventionalcommits.org/en/v1.0.0/#summary).
 
+Every merge to main should bump the version of package. Bumps it to major or minor or patch depending upon the code change.
+
 ### Linting (static code analysis)
 
  - Run `npm run lint` to run the linting on source javascript files
