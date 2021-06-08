@@ -1,1 +1,1 @@
-module.exports = () => () => './output';
+module.exports = () => () => process.env.NODE_ENV === 'test' ? './.test-output' : './output';
