@@ -4,7 +4,7 @@
   "exclude": [
     "src/**/*.test.js",
     "test/**/*.js",
-    "index.js",
+    "src/index.js",
     "src/container.js",
     "src/constants.js"
   ],

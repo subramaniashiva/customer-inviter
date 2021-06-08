@@ -1,4 +1,4 @@
-const { server, logger } = require('./src/container');
+const { server, logger } = require('./container');
 
 process.on('SIGTERM', server.stop);
 process.on('SIGINT', server.stop);
