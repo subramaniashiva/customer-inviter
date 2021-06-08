@@ -69,7 +69,7 @@ describe('server', () => {
         await server.start();
 
         const maxDist = dependencies.constants.MAX_CUSTOMER_DISTANCE_KMS;
-        const fileName = `/selectedCustomers${maxDist}Kms.txt`;
+        const fileName = `/inviteList${maxDist}Kms.txt`;
         return expect(
           dependencies.writeToFile
         ).to.have.been.calledOnceWithExactly({
