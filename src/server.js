@@ -17,7 +17,7 @@ module.exports = ({
         const fileContents = selectedCustomers.map(JSON.stringify).join("\n");
         await writeToFile({
           directory: getOutputDirectory(),
-          fileName: `/selectedCustomers${constants.MAX_CUSTOMER_DISTANCE_KMS}Kms.txt`,
+          fileName: `/inviteList${constants.MAX_CUSTOMER_DISTANCE_KMS}Kms.txt`,
           data: fileContents
         });
       } catch (err) {
