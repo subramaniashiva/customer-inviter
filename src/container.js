@@ -15,6 +15,8 @@ const isValidLongitude = require('./utils/isValidLongitude');
 const isValidNumber = require('./utils/isValidNumber');
 const getGreatCircleDistance = require('./utils/getGreatCircleDistance');
 const convertDegreeToRadian = require('./utils/convertDegreeToRadian');
+const writeToFile = require('./utils/writeToFile');
+const getOutputDirectory = require('./utils/getOutputDirectory');
 
 const server = require('./server');
 const getCustomerData = require('./getCustomerData');
@@ -46,6 +48,8 @@ container.register({
   isValidNumber: asFunction(isValidNumber),
   getGreatCircleDistance: asFunction(getGreatCircleDistance),
   convertDegreeToRadian: asFunction(convertDegreeToRadian),
+  writeToFile: asFunction(writeToFile),
+  getOutputDirectory: asFunction(getOutputDirectory),
 });
 
 container.register({
