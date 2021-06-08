@@ -5,24 +5,27 @@ describe('server', () => {
 
   const setup = ({ getInvitableCustomers, constants, logger } = {}) => {
     const dependencies = {
-      getInvitableCustomers: getInvitableCustomers || stub().resolves('some-data'),
+      getInvitableCustomers:
+        getInvitableCustomers || stub().resolves(['some-data']),
       constants: constants || {
         CUSTOMER_DATA_URL: 'http://some-url',
-        MAX_CUSTOMER_DISTANCE_KMS: 100,
+        MAX_CUSTOMER_DISTANCE_KMS: 100
       },
       logger: logger || {
         error: stub(),
-        info: stub(),
-      }
-    }
+        info: stub()
+      },
+      writeToFile: stub().resolves(),
+      getOutputDirectory: stub().returns('test')
+    };
 
     const server = serverFactory(dependencies);
 
     return {
       server,
-      dependencies,
-    }
-  }
+      dependencies
+    };
+  };
 
   after(() => {
     resetSandbox();
@@ -34,14 +37,15 @@ describe('server', () => {
 
       await server.start();
 
-      return expect(dependencies.getInvitableCustomers).
-        to.have.been.calledOnceWithExactly({
-          customerDataUrl: dependencies.constants.CUSTOMER_DATA_URL,
-          maxDistanceInKms: dependencies.constants.MAX_CUSTOMER_DISTANCE_KMS
-        });
+      return expect(
+        dependencies.getInvitableCustomers
+      ).to.have.been.calledOnceWithExactly({
+        customerDataUrl: dependencies.constants.CUSTOMER_DATA_URL,
+        maxDistanceInKms: dependencies.constants.MAX_CUSTOMER_DISTANCE_KMS
+      });
     });
 
-    describe('when there is an error in getting invitable data', () => {
+    describe('when there is an error in getting invitable customers data', () => {
       before(() => stub(process, 'exit'));
 
       after(restore);
@@ -53,6 +57,26 @@ describe('server', () => {
         await server.start();
 
         return expect(process.exit).to.have.been.calledOnceWith(1);
+      });
+    });
+
+    describe('when there is no error in getting invitable customers data', () => {
+      it('writes the data to the file', async () => {
+        const expectedCustomers = [{ user_id: 1 }, { user_id: 2 }];
+        const getInvitableCustomers = sinon.stub().resolves(expectedCustomers);
+        const { server, dependencies } = setup({ getInvitableCustomers });
+
+        await server.start();
+
+        const maxDist = dependencies.constants.MAX_CUSTOMER_DISTANCE_KMS;
+        const fileName = `/inviteList${maxDist}Kms.txt`;
+        return expect(
+          dependencies.writeToFile
+        ).to.have.been.calledOnceWithExactly({
+          directory: dependencies.getOutputDirectory(),
+          fileName,
+          data: expectedCustomers.map(JSON.stringify).join('\n')
+        });
       });
     });
   });
