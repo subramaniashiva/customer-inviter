@@ -17,15 +17,16 @@ This simple node.js app does the following
 
  1. Clone the repo using the command 
 
+	```
 	git clone git@github.com:subramaniashiva/customer-inviter.git
 
  2. Move to the cloned directory and run
-
-    npm install
+	```
+	npm install
     
  3. To start the application and view the output run 
-
-    npm start
+	```
+	npm start
 4. Open the file `output/inviteList100kms.txt` to view the list of customers sorted by user id who can be invited
 
 ## Best practices followed
@@ -45,6 +46,8 @@ Since this app is expected to be in a quality as if it is intended to ship in pr
 
 ### Commit guidelines
 This repo follows **conventional commits** for all it's commits. It is a lightweight convention on top of commit messages. More details about this convention can be found [here](https://www.conventionalcommits.org/en/v1.0.0/#summary).
+
+Every merge to main should bump the version of package. Bumps it to major or minor or patch depending upon the code change.
 
 ### Linting (static code analysis)
 
@@ -104,4 +107,4 @@ Validation is built into the repo and handled gracefully. All details about a cu
 - Build a UI to view the output data. This will also give the user the power to change radius and sort parameters
 - Move certain constants like customer data url to environment variable so that the file location can be changed without touching the code
 - Once we have a UI, health check endpoints can be added to check if the service is alive and can accept traffic
-- Create and monitor metrics such as file read/write time, sorting time.
+- Create and monitor metrics such as file read/write time, sorting time
