@@ -69,9 +69,13 @@ describe('getInvitableCustomers', () => {
   describe('when there is no error in getting customer data', () => {
     it('finds great circle distance per row of customer data', async () => {
       const customerData = [{
+        user_id: 1,
+        name: 'siva',
         latitude: '1',
         longitude: '1',
       }, {
+        user_id: 2,
+        name: 'avis',
         latitude: '2',
         longitude: '2',
       }];
@@ -103,9 +107,13 @@ describe('getInvitableCustomers', () => {
         const error = new Error(errorMessage);
         const getGreatCircleDistance = sinon.stub().throws(error);
         const customerData = [{
+          user_id: 1,
+          name: 'siva',
           latitude: '1',
           longitude: '1',
         }, {
+          user_id: 2,
+          name: 'avis',
           latitude: '2',
           longitude: '2',
         }];
@@ -125,9 +133,13 @@ describe('getInvitableCustomers', () => {
       describe('when no distance filter is given', () => {
         it('returns the customers who are within MAX_CUSTOMER_DISTANCE_KMS', async () => {
           const customerData = [{
+            user_id: 1,
+            name: 'siva',
             latitude: '1',
             longitude: '1',
           }, {
+            user_id: 2,
+            name: 'avis',
             latitude: '2',
             longitude: '2',
           }];
@@ -139,7 +151,12 @@ describe('getInvitableCustomers', () => {
 
           const selectedCustomers = await getInvitableCustomers({ customerDataUrl: 'some-url' });
 
-          return expect(selectedCustomers).to.eql([customerData[1]]);
+          return expect(selectedCustomers).to.eql([
+            {
+              user_id: customerData[1].user_id,
+              name: customerData[1].name,
+            },
+          ]);
         });
       });
 
@@ -147,10 +164,12 @@ describe('getInvitableCustomers', () => {
         it('returns the customers who are within distance given', async () => {
           const customerData = [{
             user_id: 1,
+            name: 'siva',
             latitude: '1',
             longitude: '1',
           }, {
             user_id: 2,
+            name: 'avis',
             latitude: '2',
             longitude: '2',
           }];
@@ -162,7 +181,16 @@ describe('getInvitableCustomers', () => {
 
           const selectedCustomers = await getInvitableCustomers({ customerDataUrl: 'some-url', maxDistanceInKms: 200 });
 
-          return expect(selectedCustomers).to.eql(customerData);
+          return expect(selectedCustomers).to.eql([
+            {
+              user_id: customerData[0].user_id,
+              name: customerData[0].name,
+            },
+            {
+              user_id: customerData[1].user_id,
+              name: customerData[1].name,
+            },
+          ]);
         });
       });
 
@@ -171,10 +199,12 @@ describe('getInvitableCustomers', () => {
           it('sorts by user id in ascending order', async () => {
             const customerData = [{
               user_id: 1000,
+              name: 'siva',
               latitude: '1',
               longitude: '1',
             }, {
               user_id: 200,
+              name: 'avis',
               latitude: '2',
               longitude: '2',
             }];
@@ -186,8 +216,14 @@ describe('getInvitableCustomers', () => {
 
             const selectedCustomers = await getInvitableCustomers({ customerDataUrl: 'some-url' });
 
-            expect(selectedCustomers[0]).to.eql(customerData[1]);
-            return expect(selectedCustomers[1]).to.eql(customerData[0]);
+            expect(selectedCustomers[0]).to.eql({
+              user_id: customerData[1].user_id,
+              name: customerData[1].name
+            });
+            return expect(selectedCustomers[1]).to.eql({
+              user_id: customerData[0].user_id,
+              name: customerData[0].name,
+            });
           });
         });
 
@@ -196,10 +232,12 @@ describe('getInvitableCustomers', () => {
             it('logs an error and returns unsorted list', async () => {
               const customerData = [{
                 user_id: 1000,
+                name: 'siva',
                 latitude: '1',
                 longitude: '1',
               }, {
                 user_id: 200,
+                name: 'avis',
                 latitude: '2',
                 longitude: '2',
               }];
@@ -220,8 +258,14 @@ describe('getInvitableCustomers', () => {
 
               expect(dependencies.logger.error).to.have.been.calledOnceWithExactly(
                 'Invalid sort object provided. Returning unsorted customers', { sort });
-              expect(selectedCustomers[0]).to.eql(customerData[0]);
-              return expect(selectedCustomers[1]).to.eql(customerData[1]);
+              expect(selectedCustomers[0]).to.eql({
+                user_id: customerData[0].user_id,
+                name: customerData[0].name
+              });
+              return expect(selectedCustomers[1]).to.eql({
+                user_id: customerData[1].user_id,
+                name: customerData[1].name,
+              });
             });
           });
 
@@ -253,8 +297,14 @@ describe('getInvitableCustomers', () => {
 
               expect(dependencies.logger.error).to.have.been.calledOnceWithExactly(
                 'Invalid sort object provided. Returning unsorted customers', { sort });
-              expect(selectedCustomers[0]).to.eql(customerData[0]);
-              return expect(selectedCustomers[1]).to.eql(customerData[1]);
+              expect(selectedCustomers[0]).to.eql({
+                user_id: customerData[0].user_id,
+                name: customerData[0].name,
+              });
+              return expect(selectedCustomers[1]).to.eql({
+                user_id: customerData[1].user_id,
+                name:customerData[1].name,
+              });
             });
           });
 
@@ -292,9 +342,18 @@ describe('getInvitableCustomers', () => {
                 sort,
               });
 
-              expect(selectedCustomers[0]).to.eql(customerData[1]);
-              expect(selectedCustomers[1]).to.eql(customerData[2]);
-              return expect(selectedCustomers[2]).to.eql(customerData[0]);
+              expect(selectedCustomers[0]).to.eql({
+                user_id: customerData[1].user_id,
+                name: customerData[1].name
+              });
+              expect(selectedCustomers[1]).to.eql({
+                user_id: customerData[2].user_id,
+                name: customerData[2].name,
+              });
+              return expect(selectedCustomers[2]).to.eql({
+                user_id: customerData[0].user_id,
+                name: customerData[0].name,
+              });
             });
           });
         });

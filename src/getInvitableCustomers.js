@@ -15,19 +15,23 @@ module.exports = ({ getCustomerData, constants, getGreatCircleDistance, logger }
       const longitude1 = constants.OFFICE_COORDINATES.DUBLIN.LONGITUDE;
 
       // Filter customers living within maxDistanceInKms
-      const filteredCustomers = totalCustomersList.filter(({ latitude: latitude2, longitude: longitude2 }) => {
+      const filteredCustomers = totalCustomersList.reduce((result, customer) => {
         try {
-          return getGreatCircleDistance({
+          getGreatCircleDistance({
             latitude1,
             longitude1,
-            latitude2: Number(latitude2),
-            longitude2: Number(longitude2)
-          }) <= maxDistanceInKms;
+            latitude2: Number(customer.latitude),
+            longitude2: Number(customer.longitude)
+          }) <= maxDistanceInKms ? result.push({
+            user_id: customer.user_id,
+            name: customer.name,
+          }): null;
         } catch (err) {
           logger.error({ err }, 'error while getting distance');
           throw new Error(err.message);
         }
-      });
+        return result;
+      }, []);
 
       const customerDataKeys = Object.values(constants.CUSTOMER_DATA_KEYS);
       const sortOrderKeys = Object.values(constants.SORT_ORDER);
