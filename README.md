@@ -19,11 +19,9 @@ This simple node.js app does the following
 
 	```
 	git clone git@github.com:subramaniashiva/customer-inviter.git
-
  2. Move to the cloned directory and run
 	```
 	npm install
-    
  3. To start the application and view the output run 
 	```
 	npm start
